@@ -23,6 +23,12 @@ public class Sales {
     @Column(name = "idsales")
     private Long idSales;
 
+    @Column(name = "idusuario")
+    private Long idUsuario;
+
+    @Column(name = "idproduct")
+    private Long idProduct;
+
     @Column(name = "estadoventa")
     private String estadoVenta;
 
