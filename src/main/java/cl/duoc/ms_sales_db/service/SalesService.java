@@ -1,8 +1,7 @@
 package cl.duoc.ms_sales_db.service;
 
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 import cl.duoc.ms_sales_db.model.dto.ProductDTO;
 import cl.duoc.ms_sales_db.model.dto.SalesDTO;
 import cl.duoc.ms_sales_db.model.dto.SalesDetailDTO;
+import cl.duoc.ms_sales_db.model.dto.UsuarioDTO;
 import cl.duoc.ms_sales_db.model.entities.Sales;
 import cl.duoc.ms_sales_db.model.entities.SalesDetail;
 import cl.duoc.ms_sales_db.model.repository.SalesDetailRepository;
@@ -35,7 +35,7 @@ public class SalesService {
 
         if(sales.isPresent()){
             salesDto = translateEntityToDto(sales.get());
-            List<SalesDetail> salesDetailList = salesDetailRepository.findBySalesId(sales.get().getIdSales());
+            List<SalesDetail> salesDetailList = salesDetailRepository.findBySales_IdSales(sales.get().getIdSales());
             salesDto.setSalesDetailDtoList(translateListEntityToDto(salesDetailList));
         } 
 
@@ -49,7 +49,7 @@ public class SalesService {
 
         for(SalesDetailDTO salesDetailDTO: salesDTO.getSalesDetailDtoList()){
             SalesDetail salesDetail = new SalesDetail();
-            salesDetail.setIdProduct(salesDetailDTO.getProduct().getId());
+            salesDetail.setIdProduct(salesDetailDTO.getProduct().getIdProduct());
             salesDetail.setCantidad(salesDetailDTO.getCantidad());
             salesDetail.setIdSalesDetail(newSales.getIdSales());
             salesDetailRepository.save(salesDetail);
@@ -59,32 +59,40 @@ public class SalesService {
 
         if(newSales != null){
             newSalesDTO = translateEntityToDto(newSales);
-
-            List<SalesDetail> salesDetailList = salesDetailRepository.findBySalesId(newSales.getIdSales());
+            List<SalesDetail> salesDetailList = salesDetailRepository.findBySales_IdSales(newSales.getIdSales());
             newSalesDTO.setSalesDetailDtoList(translateListEntityToDto(salesDetailList));
         }
 
         return newSalesDTO;
     }
 
-    public Sales translateDtoToEntity(SalesDTO salesDTO){
-        Sales sales = new Sales();
-        sales.setValorTotal(salesDTO.getValorTotal());
-        sales.setIdUsuario(salesDTO.getIdUsuario());
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        sales.setSalesDate(format.format(new Date()));
-        return sales;
-    }
+public Sales translateDtoToEntity(SalesDTO salesDTO){
+    Sales sales = new Sales();
+    sales.setValorTotal(salesDTO.getValorTotal());
+    sales.setIdUsuario(salesDTO.getUsuario().getIdUsuario()); 
+    sales.setEstadoVenta(salesDTO.getEstadoVenta());
+    sales.setMetodoDeRetiro(salesDTO.getMetodoDeRetiro());
+    sales.setSalesDate(LocalDate.now()); 
+    return sales;
+}
 
 
-    public SalesDTO translateEntityToDto(Sales sale){
-        SalesDTO salesDto = new SalesDTO();
-        salesDto.setIdSales(sale.getIdSales());
-        salesDto.setValorTotal(sale.getValorTotal());
-        //salesDto.setSalesDate(sale.getSalesDate());
-        salesDto.setIdUsuario(sale.getIdUsuario());
-        return salesDto;
-    }
+
+public SalesDTO translateEntityToDto(Sales sale){
+    SalesDTO salesDto = new SalesDTO();
+    salesDto.setIdSales(sale.getIdSales());
+    salesDto.setValorTotal(sale.getValorTotal());
+    salesDto.setSalesDate(sale.getSalesDate()); 
+
+    UsuarioDTO usuario = new UsuarioDTO();
+    usuario.setIdUsuario(sale.getIdUsuario());
+    salesDto.setUsuario(usuario); 
+
+    salesDto.setEstadoVenta(sale.getEstadoVenta());
+    salesDto.setMetodoDeRetiro(sale.getMetodoDeRetiro());
+    return salesDto;
+}
+
 
     public List<SalesDetailDTO> translateListEntityToDto(List<SalesDetail> saleDetail){
         List<SalesDetailDTO> lista = new ArrayList<>();
@@ -94,7 +102,7 @@ public class SalesService {
             salesDetailDTO.setIdSalesDetail(detail.getIdSalesDetail());
             
             ProductDTO productDTO = new ProductDTO();
-            productDTO.setId(detail.getIdProduct());
+            productDTO.setIdProduct(detail.getIdProduct());
             salesDetailDTO.setProduct(productDTO);
 
             salesDetailDTO.setCantidad(detail.getCantidad());

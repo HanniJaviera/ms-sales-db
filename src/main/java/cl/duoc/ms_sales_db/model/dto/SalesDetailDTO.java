@@ -11,8 +11,10 @@ import lombok.Setter;
 @Setter
 public class SalesDetailDTO {
 
+
     private Long idSalesDetail;
-    private UsuarioDTO usuario;
+
     private ProductDTO product;
-    private Long cantidad;
+
+    private Integer cantidad;
 }

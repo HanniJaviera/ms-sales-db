@@ -10,6 +10,7 @@ import cl.duoc.ms_sales_db.model.entities.SalesDetail;
 @Repository
 public interface SalesDetailRepository extends JpaRepository<SalesDetail, Long> {
 
-    public List<SalesDetail> findBySalesId(Long salesId);
+    List<SalesDetail> findBySales_IdSales(Long idSales);
+
     
 }

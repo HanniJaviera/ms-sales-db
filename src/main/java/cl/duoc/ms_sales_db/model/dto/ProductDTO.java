@@ -13,19 +13,19 @@ import lombok.ToString;
 @ToString
 public class ProductDTO {
 
-    //@JsonProperty(value = "producto_id")
-    private Long id;
 
-    //@JsonProperty(value = "producto_nombre")
+    private Long idProduct;
+
+ 
     private String nombreProduct;
 
-    //@JsonProperty(value = "producto_descripcion")
+  
     private String descripcion;
 
-    //@JsonProperty(value = "producto_cantidad")
+
     private Long cantidad;
 
-    //@JsonProperty(value = "producto_precio")
+
     private Long precio;
 
 }
