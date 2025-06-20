@@ -1,14 +1,12 @@
 package cl.duoc.ms_sales_db.model.entities;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
+import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,25 +27,27 @@ public class Sales {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idSales;
+    @Column(name = "idsales")
+    private Long id;
+
+    @Column(name = "valortotal")
+    private Long valorTotal;
 
     @Column(name = "sales_date")
-    private LocalDate salesDate;
+    private String salesDate;
 
     @Column(name = "idusuario")
-    private Long idUsuario; // 🔹 Solo guarda el ID, el resto lo traes desde ms-sales-bs
+    private Long customerId;  
 
     @Column(name = "estadoventa")
     private String estadoVenta;
 
-    @Column(name = "metododeretiro")
+    @Column(name = "metodoretiro")
     private String metodoDeRetiro;
 
-    @Column(name = "valortotal")
-    private BigDecimal valorTotal;
+    @OneToMany(mappedBy = "sales", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SalesDetail> detalles;
 
-    @OneToMany(mappedBy = "sales", cascade = CascadeType.ALL)
-    private List<SalesDetail> salesDetails = new ArrayList<>();
 }
 
 

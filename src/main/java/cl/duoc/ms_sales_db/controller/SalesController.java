@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 
-
 @RestController
 @RequestMapping("api/sales")
 public class SalesController {
@@ -38,6 +37,4 @@ public class SalesController {
                                      new ResponseEntity<>(HttpStatus.NOT_FOUND); 
     }
     
-    
-
 }

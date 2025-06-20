@@ -1,6 +1,7 @@
 package cl.duoc.ms_sales_db.model.entities;
 
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "sales_detail")
+@Table(name = "salesdetail")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -24,15 +25,27 @@ import lombok.Setter;
 public class SalesDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idSalesDetail;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idsales")
-    private Sales sales;
+    @Column(name = "idsalesdetail")
+    private Long id;
 
     @Column(name = "idproduct")
-    private Long idProduct; // 🔹 Solo guardas el ID del producto
+    private Long productId;
 
     @Column(name = "cantidad")
-    private Integer cantidad;
+    private Long quantity;
+    
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "idsales",          
+                referencedColumnName = "idsales",
+                nullable = false,
+                insertable = false, 
+                updatable = false)  
+    private Sales sales;
+
+    @Column(name = "idsales") 
+    private Long salesId; 
+
+
+   
 }

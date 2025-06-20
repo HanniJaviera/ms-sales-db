@@ -1,6 +1,7 @@
 package cl.duoc.ms_sales_db.service;
 
-import java.time.LocalDate;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,86 +13,99 @@ import org.springframework.stereotype.Service;
 import cl.duoc.ms_sales_db.model.dto.ProductDTO;
 import cl.duoc.ms_sales_db.model.dto.SalesDTO;
 import cl.duoc.ms_sales_db.model.dto.SalesDetailDTO;
-import cl.duoc.ms_sales_db.model.dto.UsuarioDTO;
 import cl.duoc.ms_sales_db.model.entities.Sales;
 import cl.duoc.ms_sales_db.model.entities.SalesDetail;
 import cl.duoc.ms_sales_db.model.repository.SalesDetailRepository;
 import cl.duoc.ms_sales_db.model.repository.SalesRepository;
+import lombok.extern.log4j.Log4j2;
 
-
+@Log4j2
 @Service
 public class SalesService {
 
     @Autowired
     SalesRepository salesRepository;
 
+
     @Autowired
     SalesDetailRepository salesDetailRepository;
 
+
     public SalesDTO findSalesById(Long id){
-        Optional<Sales> sales = salesRepository.findById(id);       
-        //Validamos si existe o no
+        Optional<Sales> sales = salesRepository.findById(id);      
         SalesDTO salesDto = null;
+
 
         if(sales.isPresent()){
             salesDto = translateEntityToDto(sales.get());
-            List<SalesDetail> salesDetailList = salesDetailRepository.findBySales_IdSales(sales.get().getIdSales());
+
+
+            List<SalesDetail> salesDetailList = salesDetailRepository.findBySalesId(sales.get().getId());
             salesDto.setSalesDetailDtoList(translateListEntityToDto(salesDetailList));
-        } 
+        }
+
 
         return salesDto;
 
+
     }
+
 
     public SalesDTO createSale(SalesDTO salesDTO){
         Sales sales = translateDtoToEntity(salesDTO);
         Sales newSales = salesRepository.save(sales);
 
+
         for(SalesDetailDTO salesDetailDTO: salesDTO.getSalesDetailDtoList()){
             SalesDetail salesDetail = new SalesDetail();
-            salesDetail.setIdProduct(salesDetailDTO.getProduct().getIdProduct());
-            salesDetail.setCantidad(salesDetailDTO.getCantidad());
-            salesDetail.setIdSalesDetail(newSales.getIdSales());
+            salesDetail.setProductId(salesDetailDTO.getProductId().getId());
+            salesDetail.setQuantity(salesDetailDTO.getQuantity());
+            salesDetail.setSalesId(newSales.getId());
             salesDetailRepository.save(salesDetail);
         }
 
+
         SalesDTO newSalesDTO = null;
+
 
         if(newSales != null){
             newSalesDTO = translateEntityToDto(newSales);
-            List<SalesDetail> salesDetailList = salesDetailRepository.findBySales_IdSales(newSales.getIdSales());
+
+
+            List<SalesDetail> salesDetailList = salesDetailRepository.findBySalesId(newSales.getId());
             newSalesDTO.setSalesDetailDtoList(translateListEntityToDto(salesDetailList));
         }
+
 
         return newSalesDTO;
     }
 
-public Sales translateDtoToEntity(SalesDTO salesDTO){
-    Sales sales = new Sales();
-    sales.setValorTotal(salesDTO.getValorTotal());
-    sales.setIdUsuario(salesDTO.getUsuario().getIdUsuario()); 
-    sales.setEstadoVenta(salesDTO.getEstadoVenta());
-    sales.setMetodoDeRetiro(salesDTO.getMetodoDeRetiro());
-    sales.setSalesDate(LocalDate.now()); 
-    return sales;
-}
+
+    public Sales translateDtoToEntity(SalesDTO salesDTO){
+        Sales sales = new Sales();
+        sales.setValorTotal(salesDTO.getValorTotal());
+        sales.setCustomerId(salesDTO.getCustomerId());;
+        sales.setEstadoVenta(salesDTO.getEstadoVenta());
+        sales.setMetodoDeRetiro(salesDTO.getMetodoDeRetiro());
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sales.setSalesDate(format.format(new Date(0)));
+   
+        return sales;
+    }
 
 
 
-public SalesDTO translateEntityToDto(Sales sale){
-    SalesDTO salesDto = new SalesDTO();
-    salesDto.setIdSales(sale.getIdSales());
-    salesDto.setValorTotal(sale.getValorTotal());
-    salesDto.setSalesDate(sale.getSalesDate()); 
 
-    UsuarioDTO usuario = new UsuarioDTO();
-    usuario.setIdUsuario(sale.getIdUsuario());
-    salesDto.setUsuario(usuario); 
-
-    salesDto.setEstadoVenta(sale.getEstadoVenta());
-    salesDto.setMetodoDeRetiro(sale.getMetodoDeRetiro());
-    return salesDto;
-}
+        public SalesDTO translateEntityToDto(Sales sale){  
+        SalesDTO salesDto = new SalesDTO();
+        salesDto.setId(sale.getId());
+        salesDto.setValorTotal(sale.getValorTotal());
+        salesDto.setEstadoVenta(sale.getEstadoVenta());
+        salesDto.setMetodoDeRetiro(sale.getMetodoDeRetiro());
+        //salesDto.setSalesDate(sale.getSalesDate());
+        salesDto.setCustomerId(sale.getCustomerId());;
+        return salesDto;
+    }
 
 
     public List<SalesDetailDTO> translateListEntityToDto(List<SalesDetail> saleDetail){
@@ -99,19 +113,20 @@ public SalesDTO translateEntityToDto(Sales sale){
         SalesDetailDTO salesDetailDTO = null;
         for(SalesDetail detail: saleDetail){
             salesDetailDTO = new SalesDetailDTO();
-            salesDetailDTO.setIdSalesDetail(detail.getIdSalesDetail());
-            
-            ProductDTO productDTO = new ProductDTO();
-            productDTO.setIdProduct(detail.getIdProduct());
-            salesDetailDTO.setProduct(productDTO);
+            salesDetailDTO.setId(detail.getId());
 
-            salesDetailDTO.setCantidad(detail.getCantidad());
-            salesDetailDTO.setIdSalesDetail(detail.getIdSalesDetail());
+
+            ProductDTO productDTO = new ProductDTO();
+            productDTO.setId(detail.getProductId());
+            salesDetailDTO.setProductId(productDTO);
+
+
+            salesDetailDTO.setQuantity(detail.getQuantity());
+            salesDetailDTO.setSalesId(detail.getSalesId());
             lista.add(salesDetailDTO);
         }
-        
+       
         return lista;
     }
-
 
 }

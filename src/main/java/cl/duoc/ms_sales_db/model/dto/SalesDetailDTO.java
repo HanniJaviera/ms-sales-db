@@ -11,10 +11,11 @@ import lombok.Setter;
 @Setter
 public class SalesDetailDTO {
 
+    private Long id;
 
-    private Long idSalesDetail;
+    private ProductDTO productId;   
 
-    private ProductDTO product;
-
-    private Integer cantidad;
+    private Long quantity;
+    
+    private Long salesId; 
 }
