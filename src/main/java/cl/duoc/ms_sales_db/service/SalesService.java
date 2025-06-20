@@ -2,7 +2,9 @@ package cl.duoc.ms_sales_db.service;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
 
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +60,7 @@ public class SalesService {
         if(newSales != null){
             newSalesDTO = translateEntityToDto(newSales);
 
-            List<SalesDetail> salesDetailList = salesDetailRepository.findBySalesId(newSales.getId());
+            List<SalesDetail> salesDetailList = salesDetailRepository.findBySalesId(newSales.getIdSales());
             newSalesDTO.setSalesDetailDtoList(translateListEntityToDto(salesDetailList));
         }
 
@@ -77,10 +79,10 @@ public class SalesService {
 
     public SalesDTO translateEntityToDto(Sales sale){
         SalesDTO salesDto = new SalesDTO();
-        salesDto.setSalesId(sale.getId());
-        salesDto.setAmount(sale.getAmount());
+        salesDto.setIdSales(sale.getIdSales());
+        salesDto.setValorTotal(sale.getValorTotal());
         //salesDto.setSalesDate(sale.getSalesDate());
-        salesDto.setCustomerId(sale.getCustomerId());
+        salesDto.setIdUsuario(sale.getIdUsuario());
         return salesDto;
     }
 
@@ -89,14 +91,14 @@ public class SalesService {
         SalesDetailDTO salesDetailDTO = null;
         for(SalesDetail detail: saleDetail){
             salesDetailDTO = new SalesDetailDTO();
-            salesDetailDTO.setId(detail.getId());
+            salesDetailDTO.setIdSalesDetail(detail.getIdSalesDetail());
             
             ProductDTO productDTO = new ProductDTO();
-            productDTO.setId(detail.getProductId());
+            productDTO.setId(detail.getIdProduct());
             salesDetailDTO.setProduct(productDTO);
 
-            salesDetailDTO.setQuantity(detail.getQuantity());
-            salesDetailDTO.setSalesId(detail.getSalesId());
+            salesDetailDTO.setCantidad(detail.getCantidad());
+            salesDetailDTO.setIdSalesDetail(detail.getIdSalesDetail());
             lista.add(salesDetailDTO);
         }
         
