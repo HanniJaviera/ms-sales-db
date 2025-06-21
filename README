@@ -1,0 +1,40 @@
+CREATE TABLE `perfulandia`.`sales` (
+  `idsales` INT NOT NULL AUTO_INCREMENT,
+  `sales_date` DATE NOT NULL,
+  `idusuario` INT NOT NULL,
+  `estadoventa` VARCHAR(50) NOT NULL,
+  `metodoretiro` VARCHAR(50) NOT NULL,
+  `valortotal` DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  PRIMARY KEY (`idsales`),
+  INDEX `idx_idusuario` (`idusuario`),
+  CONSTRAINT `fk_sales_usuario`
+    FOREIGN KEY (`idusuario`)
+    REFERENCES `usuario` (`idusuario`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+);
+
+
+CREATE TABLE `perfulandia`.`salesdetail` (
+  `idsalesdetail` INT NOT NULL AUTO_INCREMENT,
+  `idsales` INT NOT NULL,
+  `idproduct` INT NOT NULL,
+  `cantidad` INT NOT NULL,
+  PRIMARY KEY (`idsalesdetail`),
+  INDEX `idx_idsales` (`idsales`),
+  INDEX `idx_idproduct` (`idproduct`),
+  CONSTRAINT `fk_salesdetail_sales`
+    FOREIGN KEY (`idsales`)
+    REFERENCES `sales` (`idsales`)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT `fk_salesdetail_product`
+    FOREIGN KEY (`idproduct`)
+    REFERENCES `product` (`idproduct`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION
+);
+
+
+INSERT INTO `perfulandia`.`sales` (`idsales`, `sales_date`, `idusuario`, `estadoventa`, `metodoretiro`, `valortotal`) VALUES ('1', '2025-06-20', '1', 'APROBADA', 'RETIRO EN TIENDA', '70000');
+INSERT INTO `perfulandia`.`salesdetail` (`idsalesdetail`, `idsales`, `idproduct`, `cantidad`) VALUES ('1', '1', '1', '1');
